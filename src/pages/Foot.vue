@@ -4,7 +4,7 @@
 <style>
    .footer{
     height:50px;
-    background-color:#2cc0f1;
+    background-color:#6abfc7;
     position:fixed;
     bottom:0;
     width:100%;

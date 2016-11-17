@@ -1,10 +1,10 @@
 <template>
-  <div id="app">
-    <hader-component />
-    <router-view></router-view>
-    <foot v-if="!isAuthed"/>
-    <nav-component v-if="isAuthed"/>
-  </div>
+    <div id="app">
+        <hader-component/>
+        <router-view></router-view>
+        <foot v-if="!isAuthed"/>
+        <nav-component v-if="isAuthed"/>
+    </div>
 </template>
 
 <script>
@@ -15,6 +15,8 @@ import Foot from './pages/Foot.vue'
 
 import Nav from './pages/Nav.vue'
 
+import data from './store/Data'
+
 export default {
   name: 'app',
   data () {
@@ -22,6 +24,8 @@ export default {
       msg: 'Welcome to Your Vue.js App'
     }
   },
+  created() {
+    },
   computed:{
      isAuthed(){
        return this.$store.state.auth.isAuthed;
@@ -33,6 +37,7 @@ export default {
             'nav-component': Nav
         }
 }
+
 </script>
 
 <style>
@@ -53,6 +58,7 @@ h1, h2 {
 a{
  font-size:12px;
 }
+
 
 
 </style>

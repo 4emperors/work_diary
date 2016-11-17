@@ -6,7 +6,7 @@
                    autofocus autocomplete="off"
                    placeholder="What needs to be done?"
                    v-model="newTodo"
-                   @keyup.enter="addTodo">
+                   @blur="addTodo">
         </div>
         <section class="main" v-show="todos.length" v-cloak>
             <input class="toggle-all" type="checkbox" v-model="allDone">
@@ -17,7 +17,7 @@
                     :class="{ completed: todo.completed, editing: todo == editedTodo }">
                     <div class="view">
                         <input class="toggle" type="checkbox" v-model="todo.completed">
-                        <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
+                        <label @click="editTodo(todo)">{{ todo.title }}</label>
                         <button class="destroy" @click="removeTodo(todo)"></button>
                     </div>
                     <input class="edit" type="text"
@@ -402,20 +402,8 @@ html .clear-completed:active {
 
 </style>
 <script>
- var STORAGE_KEY = 'todos-vuejs-2.0'
-var todoStorage = {
-  fetch: function () {
-    var todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-    todos.forEach(function (todo, index) {
-      todo.id = index
-    })
-    todoStorage.uid = todos.length
-    return todos
-  },
-  save: function (todos) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
-  }
-}
+
+import data from '../../store/Data'
 
 // visibility filters
 var filters = {
@@ -438,16 +426,27 @@ var filters = {
 export default {
   data() {
       return {
-        todos: todoStorage.fetch(),
+        todos: [],
         newTodo: '',
         editedTodo: null,
         visibility: 'all'
         }
   },
+  mounted(){
+      var vm=this;
+       var uid=vm.$store.state.auth.userInfo.uid;
+       console.log("go");
+       data.sync().ref("todos").child(uid).once('value', function(dataSnapshot) {
+          console.log(dataSnapshot.val());
+          if(vm.todos.length==0&&dataSnapshot&&dataSnapshot.val()){
+            vm.todos=vm.todos.concat(dataSnapshot.val());
+          }
+       });
+  },
   watch: {
     todos: {
       handler: function (todos) {
-        todoStorage.save(todos)
+       data.sync().ref("todos").child(this.$store.state.auth.userInfo.uid).set(todos);
       },
       deep: true
     }
@@ -483,8 +482,9 @@ export default {
       if (!value) {
         return
       }
+      var _id= this.todos.length+1;
       this.todos.push({
-        id: todoStorage.uid++,
+        id: _id,
         title: value,
         completed: false
       })
@@ -514,7 +514,6 @@ export default {
       this.editedTodo = null
       todo.title = this.beforeEditCache
     },
-
     removeCompleted: function () {
       this.todos = filters.active(this.todos)
     }

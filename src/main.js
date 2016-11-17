@@ -11,6 +11,8 @@ import todoPage from './pages/todo/todo.vue'
 
 import store from './store/Store'
 
+import data from './store/Data'
+
 function requireAuth (to, from, next) {
   if (!store.state.auth.isAuthed) {
     next({
@@ -38,3 +40,7 @@ const  app = new Vue({
   store:store,
   render: h => h(App)
 }).$mount('#app');
+
+
+
+

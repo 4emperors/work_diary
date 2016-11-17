@@ -2,7 +2,7 @@
 
 > 一个自己用的工作记事本,如加班时间,加班费,饭补等.(数据库采用野狗)
 
-## Build Setup
+## 构建步骤
 
 ``` bash
 # install dependencies
