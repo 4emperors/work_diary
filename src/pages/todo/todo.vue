@@ -75,11 +75,13 @@
 }
 
 .todoapp {
-	background: #fff;
+	background: rgba(115, 47, 91, 0.51);
 	margin: 130px 0 40px 0;
 	position: relative;
+	z-index:0;
 	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2),
 	            0 25px 50px 0 rgba(0, 0, 0, 0.1);
+
 }
 
 .todoapp input::-webkit-input-placeholder {
@@ -102,9 +104,9 @@
 
 .todoapp h1 {
 	position: absolute;
-	top: -155px;
+	top: -145px;
 	width: 100%;
-	font-size: 100px;
+	font-size: 60px;
 	font-weight: 100;
 	text-align: center;
 	color: rgba(175, 47, 47, 0.15);
