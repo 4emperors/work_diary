@@ -5,6 +5,7 @@ Vue.use(VueRouter);
 
 import App from './App.vue'
 import IndexPage from './pages/home/index.vue'
+import overtimePage from './pages/overtime/index.vue'
 
 import LoginPage from './pages/login/index.vue'
 import todoPage from './pages/todo/todo.vue'
@@ -28,6 +29,7 @@ const routes = [
   { path: '/home', component: IndexPage ,beforeEnter:requireAuth},
   { path: '/login', component: LoginPage },
   { path: '/todo', component: todoPage,beforeEnter:requireAuth },
+  { path: '/overtime', component: overtimePage },
 ]
 
 const router = new VueRouter({
