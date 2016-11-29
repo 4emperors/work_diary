@@ -1,11 +1,12 @@
 <template>
     <div>
-        <header-component/>
         <ul class="nav">
             <li class="current"><a href="">添加</a></li>
             <li><a href="">查看</a></li>
         </ul>
         <div class="wrapper mt50">
+                <DatePicker :readonly="true" format="YYYY-MM-DD HH:mm:ss"></DatePicker>
+
             <form id="add_form">
                 <div class="form-group">
                     <label>日期：</label>
@@ -35,7 +36,6 @@
                 </div>
             </form>
         </div>
-        <other-component/>
     </div>
 </template>
 <style>
@@ -71,7 +71,9 @@ Date.prototype.Format = function (fmt) { //author: meizz
     if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }
+import DatePicker from '../../common/datepicker.vue'
     export default{
+     components:{ DatePicker },
         data(){
             return{
                 date:new Date().Format("yyyy-MM-dd"),
@@ -85,6 +87,5 @@ Date.prototype.Format = function (fmt) { //author: meizz
                 minute:''
             }
         },
-
     }
 </script>
