@@ -106,11 +106,25 @@
 .datetime-picker .btn-next:hover {
     background: rgba(16, 160, 234, 0.5);
 }
+.timetab, .datetab{
+    padding: 2px 6px;
+    font-size: 20px;
+    top: -20px;
+    position: relative;
+    width: 100px;
+    display: inline-block;
+    color: #fff;
+    background: #3bb4f2;
+ }
+
 .timeselect{
     border: 1px solid;
     padding: 2px 6px;
     font-size: 20px;
     font-weight: bold;
+ }
+ .timeselect_area {
+   height:260px;
  }
 </style>
 
@@ -151,31 +165,48 @@
                 </tr>
                 </tbody>
             </table>
-            <table v-show="type=='datetime'" class="date-picker">
+            <table v-show="type=='datetime'" class="date-picker timeselect_area">
                   <tr>
-                      <td><span @click="time.hours++" class="timeselect">+</span></td>
-                      <td> {{('0'+time.hours).slice(-2)}} </td>
-                      <td><span  @click="time.hours--" class="timeselect">-</span></td>
+                      <td><span @click="chnagetime('h',1)" class="timeselect">+</span></td>
+                      <td> {{('0'+ hours).slice(-2)}} </td>
+                      <td><span  @click="chnagetime('h',-1)" class="timeselect">-</span></td>
                 </tr>
                 <tr>
-                      <td> <span @click="time.minutes++" class="timeselect">+</span>  </td>
-                      <td>  {{('0'+time.minutes).slice(-2)}} </td>
-                      <td> <span  @click="time.minutes--" class="timeselect">-</span>  </td>
+                      <td> <span @click="chnagetime('m',1)" class="timeselect">+</span>  </td>
+                      <td>  {{('0'+ (minutes>=0?minutes%60:0)).slice(-2)}} </td>
+                      <td> <span  @click="chnagetime('m',-1)" class="timeselect">-</span>  </td>
                 </tr>
                 <tr>
-                      <td> <span @click="time.seconds++" class="timeselect">+</span>  </td>
-                      <td>  {{('0'+time.seconds).slice(-2)}} </td>
-                      <td> <span  @click="time.seconds--" class="timeselect">-</span>  </td>
+                      <td> <span @click="seconds++" class="timeselect">+</span>  </td>
+                      <td>  {{('0'+ (seconds>=0?seconds%60:0)).slice(-2)}} </td>
+                      <td> <span  @click="seconds--" class="timeselect">-</span>  </td>
                 </tr>
              </table>
-            <span @click="tabchange('datetime')">时间</span><span @click="tabchange('date')">日历</span>
+            <span class="timetab"  @click="tabchange('datetime')">时间</span>
+            <span class="datetab" @click="tabchange('date')">日历</span>
         </div>
     </div>
 </template>
 
 <script>
     export default {
+       format(date,fmt) {
+            var o = {
+                "M+": date.getMonth() + 1, //月份
+                "d+": date.getDate(), //日
+                "h+": date.getHours(), //小时
+                "m+": date.getMinutes(), //分
+                "s+": date.getSeconds(), //秒
+                "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                "S": date.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        },
         props: {
+            change:{ type: Function },
             width: { type: String, default: '238px' },
             readonly: { type: Boolean, default: false },
             value: { type: String, default: '' },
@@ -190,17 +221,15 @@
                 months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 date: [],
                 now: new Date(),
-                time:{
-                  hours:new Date().getHours(),
-                  minutes:new Date().getMinutes(),
-                  seconds:new Date().getSeconds()
-                }
-
+                hours:new Date().getHours(),
+                minutes:new Date().getMinutes(),
+                seconds:new Date().getSeconds()
             };
         },
         watch: {
-            time(){
-             this.update();
+            value(){
+            if(this.change)
+              this.change(this.value);
             },
             now () {
                 this.update();
@@ -210,6 +239,24 @@
             }
         },
         methods: {
+            chnagetime(type,num){
+               var me=this;
+                switch(type){
+                 case 'h':
+                    me.hours+=num;
+                    me.hours=me.hours>=0?me.hours%24:0
+                    break;
+                 case 'm':
+                    me.minutes+=num;
+                    me.minutes=me.minutes>=0?me.minutes%60:0
+                    break;
+                 case 's':
+                      me.seconds+=num;
+                      me.seconds = me.seconds>=0?me.seconds%60:0;
+                       break;
+                }
+                this.value = this.stringify();
+            },
             close () {
                 this.show = false;
             },
@@ -267,7 +314,6 @@
                 this.now = new Date(this.now);
             },
             pickDate (index) {
-                this.show = false;
                 this.now = new Date(this.date[index].time);
                 this.value = this.stringify();
             },
@@ -287,9 +333,9 @@
                     M: month,
                     DD: ('0' + date).slice(-2),
                     D: date,
-                    HH: ('0' +this.time.hours).slice(-2),
-                    mm: ('0' +this.time.minutes).slice(-2),
-                    ss: ('0' + this.time.seconds).slice(-2)
+                    HH: ('0' +this.hours).slice(-2),
+                    mm: ('0' +this.minutes).slice(-2),
+                    ss: ('0' + this.seconds).slice(-2)
                 };
                 return format.replace(/Y+|M+|D+|s+|H+|m+/g, function (str) {
                     return map[str];
@@ -306,7 +352,7 @@
             document.addEventListener('click', this.leave, false);
         },
         beforeDestroy () {
-            document.removeEventListener('click', this.leave, false);
+          document.removeEventListener('click', this.leave, false);
         }
     };
 </script>

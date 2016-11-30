@@ -5,17 +5,17 @@
             <li><a href="">查看</a></li>
         </ul>
         <div class="wrapper mt50">
-                <DatePicker :readonly="true" format="YYYY-MM-DD HH:mm:ss"></DatePicker>
+
 
             <form id="add_form">
                 <div class="form-group">
-                    <label>日期：</label>
-                    <input type="text" v-model="date" name="">
+                    <label>日期:</label>
+                    <DatePicker :readonly="true"  :change="change" format="YYYY-MM-DD HH:mm:ss"></DatePicker>
                 </div>
                 <div class="form-group">
                     <label>姓名：</label>
                     <select v-model="staff">
-                        <option v-for="staff in staffs" v-bind:value="staff.name">{{staff.name}}</option>
+                        <option v-for="staff in staffs" :value="staff.name">{{staff.name}}</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -32,7 +32,7 @@
                 </div>
                 <div class="form-group">
                     <label></label>
-                    <input class="button" v-on:click="save" type="button" value="保存">
+                    <input class="button" @click="save" type="button" value="保存">
                 </div>
             </form>
         </div>
@@ -56,36 +56,30 @@ html,body,h1,h2,h3,h4,h5,h6,p,ul,ol,li,a,input{
 .form-group .button{background-color:#6abfc7; border:none; width:200px; border-radius:5px; color:#fff;}
 </style>
 <script>
-Date.prototype.Format = function (fmt) { //author: meizz
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-}
+
 import DatePicker from '../../common/datepicker.vue'
     export default{
      components:{ DatePicker },
-        data(){
-            return{
-                date:new Date().Format("yyyy-MM-dd"),
-                staffs:[
-                    {name:'李雅宁'},
-                    {name:'李雅宁'},
-                    {name:'李雅宁'}
-                ],
-                day:'',
-                hour:'',
-                minute:''
-            }
+     methods:{
+        change(val){
+         this.date=val;
         },
+         save(){
+            console.log(this.date);
+         }
+     },
+    data(){
+        return{
+            date:DatePicker.format(new Date(),"yy-MM-dd"),
+            staffs:[
+                {name:'李雅宁'},
+                {name:'李雅宁'},
+                {name:'李雅宁'}
+            ],
+            day:'',
+            hour:'',
+            minute:''
+        }
     }
+  }
 </script>
